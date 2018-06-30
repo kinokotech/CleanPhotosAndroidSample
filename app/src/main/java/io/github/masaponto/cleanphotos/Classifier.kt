@@ -22,7 +22,7 @@ class Classifier(activity: Activity) {
     init {
         tffile = Interpreter(loadModelFile(activity))
         labelProbArray = Array(1, {FloatArray(1)})
-        imageData = ByteBuffer.allocateDirect(IMAGE_SIZE * IMAGE_SIZE * 3 * 4)
+        imageData = ByteBuffer.allocateDirect(IMAGE_SIZE * IMAGE_SIZE * 3 * 4) // 2352 * 4byte
     }
 
     @Throws(IOException::class)
@@ -35,19 +35,23 @@ class Classifier(activity: Activity) {
         return fileChannel.map(FileChannel.MapMode.READ_ONLY, startOffset, declaredLength)
     }
 
-    private fun convertMatToTfliteInput(matImage: Mat) : ByteBuffer {
+    private fun convertMatToTfliteInput(matImage: Mat) {
         imageData.order(ByteOrder.LITTLE_ENDIAN)
+
         for (i in 0 until IMAGE_SIZE) {
             for (j in 0 until IMAGE_SIZE) {
-                imageData.putFloat(matImage.get(i,j)[0].toFloat()/255.0f)
+                for (k in 0 until 3) {
+                    imageData.putFloat(matImage.get(i, j)[k].toFloat() / 255.0f)
+                }
             }
         }
-        return imageData
     }
 
     fun classifyImage(matImage: Mat): Array<FloatArray> {
-        val imageData = convertMatToTfliteInput(matImage)
+        convertMatToTfliteInput(matImage)
         tffile.run(imageData, labelProbArray)
+        imageData.clear()
+        Log.d("size",labelProbArray.size.toString())
         return labelProbArray
     }
 

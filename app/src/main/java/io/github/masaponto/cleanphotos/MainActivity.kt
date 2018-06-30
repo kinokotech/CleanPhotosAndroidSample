@@ -14,6 +14,8 @@ import org.opencv.android.Utils
 import org.opencv.core.CvType
 import java.io.File
 import org.opencv.core.Mat
+import org.opencv.core.Size
+import org.opencv.imgproc.Imgproc
 
 class MainActivity : AppCompatActivity() {
 
@@ -38,7 +40,7 @@ class MainActivity : AppCompatActivity() {
                 if (file.exists()) {
 
                     val option = BitmapFactory.Options()
-                    option.inSampleSize = 2
+                    //option.inSampleSize = 2
 
                     //option.outHeight = 28
                     //option.outWidth = 28
@@ -48,17 +50,22 @@ class MainActivity : AppCompatActivity() {
                     //option.inSampleSize = 2
 
                     var bm = BitmapFactory.decodeFile(file.path, option)
-                    bm = Bitmap.createScaledBitmap(bm, 28, 28, false)
+                    //bm = Bitmap.createScaledBitmap(bm, 28, 28, false)
 
                     bm?.let {
 
                         // set image view
-                        val imageView: ImageView = findViewById(R.id.imageView)
-                        imageView.setImageBitmap(bm)
+                        //val imageView: ImageView = findViewById(R.id.imageView)
+                        //imageView.setImageBitmap(bm)
+
+                        val srcMat = Mat(bm.width, bm.height, CvType.CV_8UC3)
+                        Utils.bitmapToMat(it, srcMat)
+                        Imgproc.cvtColor(srcMat,srcMat,Imgproc.COLOR_BGRA2RGB)
 
                         // convert bitmap to Mat
-                        val matImage = Mat(28,28, CvType.CV_32F)
-                        Utils.bitmapToMat(it, matImage)
+                        val matImage = Mat(28,28, CvType.CV_8UC3)
+                        Imgproc.resize(srcMat, matImage, Size(28.0, 28.0))
+                        matImage.convertTo(matImage, CvType.CV_8UC3)
 
                         // classification with TF Lite
                         val label = classifier.classifyImage(matImage)
