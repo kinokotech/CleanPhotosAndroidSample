@@ -51,7 +51,6 @@ class Classifier(activity: Activity) {
         convertMatToTfliteInput(matImage)
         tffile.run(imageData, labelProbArray)
         imageData.clear()
-        Log.d("size",labelProbArray.size.toString())
         return labelProbArray
     }
 

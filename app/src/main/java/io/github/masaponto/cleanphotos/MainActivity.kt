@@ -35,28 +35,16 @@ class MainActivity : AppCompatActivity() {
 
         button.setOnClickListener {
             if (dir.exists()) {
+
+                //val file = File(dir.absolutePath + "/IMG_20180425_122554.jpg")
                 val file = File(dir.absolutePath + "/IMG_20180425_122602.jpg")
                 //val file = File(dir.absolutePath + "/test.jpg")
+
                 if (file.exists()) {
 
-                    val option = BitmapFactory.Options()
-                    //option.inSampleSize = 2
-
-                    //option.outHeight = 28
-                    //option.outWidth = 28
-                    //option.inJustDecodeBounds = false
-                    //BitmapFactory.decodeFile(file.path, option)
-                    //option.inJustDecodeBounds = true
-                    //option.inSampleSize = 2
-
-                    var bm = BitmapFactory.decodeFile(file.path, option)
-                    //bm = Bitmap.createScaledBitmap(bm, 28, 28, false)
+                    val bm = BitmapFactory.decodeFile(file.path)
 
                     bm?.let {
-
-                        // set image view
-                        //val imageView: ImageView = findViewById(R.id.imageView)
-                        //imageView.setImageBitmap(bm)
 
                         val srcMat = Mat(bm.width, bm.height, CvType.CV_8UC3)
                         Utils.bitmapToMat(it, srcMat)
@@ -74,10 +62,10 @@ class MainActivity : AppCompatActivity() {
                         matImage.release()
 
                         Toast.makeText(this,
-                                "Result:" + label[0][0].toString(),Toast.LENGTH_LONG).show()
+                                "Result:" + label[0][0].toString(),
+                                Toast.LENGTH_LONG).show()
 
                     }
-
                 }
 
             }
