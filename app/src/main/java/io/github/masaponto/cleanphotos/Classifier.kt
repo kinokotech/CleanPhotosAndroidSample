@@ -22,14 +22,14 @@ import java.nio.ByteOrder
 class Classifier(activity: Activity) {
 
     private val IMAGE_SIZE = 28
-    private val MODEL_NAME = "cnn_bler.tflite"
+    private val MODEL_NAME = "cnn.tflite"
     private var tffile: Interpreter
     private var labelProbArray: Array<FloatArray>
     private var imageData: ByteBuffer
 
     init {
         tffile = Interpreter(loadModelFile(activity))
-        labelProbArray = Array(1, {FloatArray(1)})
+        labelProbArray = Array(1, {FloatArray(3)})
         imageData = ByteBuffer.allocateDirect(IMAGE_SIZE * IMAGE_SIZE * 3 * 4) // 2352 * 4byte
     }
 
@@ -62,7 +62,7 @@ class Classifier(activity: Activity) {
         return labelProbArray
     }
 
-    fun classifyImageFromPath(path: String): Float? {
+    fun classifyImageFromPath(path: String): Int {
         val file = File(path)
         //val file = File(dir.absolutePath + "/test.jpg")
 
@@ -82,16 +82,22 @@ class Classifier(activity: Activity) {
                 matImage.convertTo(matImage, CvType.CV_8UC3)
 
                 // classification with TF Lite
-                val label = classifyImage(matImage)
+                val pred = classifyImage(matImage)
 
                 // Release
                 matImage.release()
 
-                return label[0][0]
+                return toLabel(pred[0])
             }
         }
 
         throw Exception("Fail to load image")
+    }
+
+
+    private fun toLabel(floatArray: FloatArray): Int {
+        val tmp = floatArray.indices.maxBy { floatArray[it] } ?: -1
+        return tmp + 1
     }
 
 }

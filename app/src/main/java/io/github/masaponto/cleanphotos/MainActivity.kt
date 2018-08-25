@@ -27,9 +27,13 @@ class MainActivity : AppCompatActivity() {
 
         button.setOnClickListener {
             if (dir.exists()) {
-                val path = dir.absolutePath + "/IMG_20180425_122602.jpg"
-                val label: Float? = classifier.classifyImageFromPath(path)
+                //val f = "IMG_20180825_095946.jpg" // dark
+                //val f = "IMG_20180425_122602.jpg"  // normal
+                val f = "test.jpg" // blur
 
+                val path = dir.absolutePath + "/" + f
+                val label = classifier.classifyImageFromPath(path)
+                
                 Toast.makeText(this,
                         "Result:" + label.toString(),
                         Toast.LENGTH_LONG).show()
