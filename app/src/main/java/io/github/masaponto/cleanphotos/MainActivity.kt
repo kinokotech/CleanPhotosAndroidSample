@@ -31,11 +31,20 @@ class MainActivity : AppCompatActivity() {
                 //val f = "IMG_20180425_122602.jpg"  // normal
                 val f = "test.jpg" // blur
 
-                val path = dir.absolutePath + "/" + f
-                val label = classifier.classifyImageFromPath(path)
+                //resources.assets.open()
+                val files = arrayOf("IMG_20180825_095946.jpg", "IMG_20180425_122602.jpg", "test.jpg")
+                val paths = files.map { dir.absolutePath + "/" + it }.toTypedArray()
+
+                //val path = dir.absolutePath + "/" + f
+                //val label = classifier.classifyImageFromPath(path)
+
+                val labels = classifier.classifyBatchImageFromPath(paths)
+
                 
                 Toast.makeText(this,
-                        "Result:" + label.toString(),
+                        "Result0:" + labels[0] + "\n" +
+                                "Result1:" + labels[1] + "\n" +
+                                "Result2:" + labels[2] + "\n",
                         Toast.LENGTH_LONG).show()
             }
         }
